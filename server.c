@@ -20,7 +20,6 @@ unsigned char receiver_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char receiver_sk[crypto_box_SECRETKEYBYTES];
 int result;
 long long int counter;
-char message[INTERNAL_MESSAGE_LENGTH] = "This is the forest primeval ...\n";
 unsigned char plaintext[MESSAGE_LENGTH];
 unsigned char ciphertext[MESSAGE_LENGTH];
 unsigned char shared_nonce[crypto_box_NONCEBYTES];
