@@ -1,20 +1,22 @@
-/* Test program for Protocol Construction */
+/* Test program for crypto_box utilities */
 
-/* Michael Owusu
-   Camila Mateo
+/* John David Stone
+   Department of Computer Science
+   Grinnell College
+   stone@cs.grinnell.edu
 
-   created February 25, 2015
+   created February 10, 2015
+   last revised February 24, 2015
 */
 
 #include <stdio.h>
 #include <assert.h>
 #include "crypto_box.h"
-#include "client.h"
-#include "server.h"
 
- #define INTERNAL_MESSAGE_LENGTH  45
- #define MESSAGE_LENGTH           (crypto_box_ZEROBYTES + INTERNAL_MESSAGE_LENGTH)
-#define NO_ERROR  
+#define INTERNAL_MESSAGE_LENGTH  45
+#define MESSAGE_LENGTH           (crypto_box_ZEROBYTES + INTERNAL_MESSAGE_LENGTH)
+#define NO_ERROR                 0
+
 /* Display the contents of an array of unsigned char values. */
 
 void display_bytes(const unsigned char *byte_vector, long long int length) {
@@ -28,7 +30,7 @@ void display_bytes(const unsigned char *byte_vector, long long int length) {
   putchar('\n');
 }
 
-int main(){
+int main() {
 
   unsigned char sender_pk[crypto_box_PUBLICKEYBYTES];
   unsigned char sender_sk[crypto_box_SECRETKEYBYTES];
@@ -42,7 +44,7 @@ int main(){
   unsigned char shared_nonce[crypto_box_NONCEBYTES];
   unsigned char decrypted[MESSAGE_LENGTH];
 
-/* Construct keypairs for sender and receiver. */
+  /* Construct keypairs for sender and receiver. */
 
   result = crypto_box_keypair(sender_pk, sender_sk);
   assert(result == 0);
@@ -61,7 +63,6 @@ int main(){
 
   (void) printf("receiver_sk:\n");
   display_bytes(receiver_sk, crypto_box_SECRETKEYBYTES);
-
 
   /* Prepare a message for encryption. */
 
@@ -82,6 +83,25 @@ int main(){
   (void) printf("shared_nonce:\n");
   display_bytes(shared_nonce, crypto_box_NONCEBYTES);
 
- return 0;
+  /* Encrypt the message. */
 
+  result = crypto_box(ciphertext, plaintext, MESSAGE_LENGTH, shared_nonce, receiver_pk, sender_sk);
+  assert(result == 0);
+
+  (void) printf("ciphertext:\n");
+  display_bytes(ciphertext, MESSAGE_LENGTH);
+
+  /* Decrypt the message at the receiving end.
+
+     crypto_box returns a value that begins with crypto_box_BOXZEROBYTES
+     zero bytes, and so satisfies the precondition for crypto_box_open.
+  */
+
+  result = crypto_box_open(decrypted, ciphertext, MESSAGE_LENGTH, shared_nonce, sender_pk, receiver_sk);
+  assert(result == 0);
+
+  (void) printf("decrypted:\n");
+  display_bytes(decrypted, MESSAGE_LENGTH);
+
+  return NO_ERROR;
 }
