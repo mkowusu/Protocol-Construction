@@ -10,6 +10,7 @@
    For help with creating structs and passing them between programs
 
    Mr. Stone for help with compiling programs to include devurandom.c functions
+   And debugging header files
 
    http://cboard.cprogramming.com/c-programming/136163-help-array-def-different-file.html
    For help with using header files to share data
@@ -44,9 +45,6 @@ int main(){
   int result;
   long long int counter;
   char message[INTERNAL_MESSAGE_LENGTH] = "This is the forest primeval ...\n";
-  unsigned char plaintext[MESSAGE_LENGTH];
-  unsigned char ciphertext[MESSAGE_LENGTH];
-  unsigned char decrypted[MESSAGE_LENGTH];
 
   /* Prepare and display a message for encryption. */
 

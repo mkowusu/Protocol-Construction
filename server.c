@@ -51,7 +51,7 @@ void serverDecrypt() {
      zero bytes, and so satisfies the precondition for crypto_box_open.
   */
 
-  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, server_nonce, sender_pk, receiver_sk);
+  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, client_nonce, sender_pk, receiver_sk);
   assert(result == 0);
 
   (void) printf("Decrypted Message:\n");

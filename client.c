@@ -55,6 +55,9 @@ void clientGenerateKeyPair() {
   /* Display ciphertext */
 void clientEncrypt(){
 
+  (void) printf("Plaintext as seen by client:\n");
+  display_bytes(plaintext, MESSAGE_LENGTH);
+
   result = crypto_box(clientCiphertext, plaintext, MESSAGE_LENGTH, client_nonce, receiver_pk, sender_sk);
   assert(result == 0);
 
