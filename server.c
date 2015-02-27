@@ -9,28 +9,52 @@
 #include <stdio.h>
 #include <assert.h>
 #include "crypto_box.h"
-#include "client.h"
-
-
- #define INTERNAL_MESSAGE_LENGTH  45
- #define MESSAGE_LENGTH           (crypto_box_ZEROBYTES + INTERNAL_MESSAGE_LENGTH)
-#define NO_ERROR  
+#include "client.h"  
 
 unsigned char receiver_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char receiver_sk[crypto_box_SECRETKEYBYTES];
-int result;
 long long int counter;
-unsigned char plaintext[MESSAGE_LENGTH];
-unsigned char ciphertext[MESSAGE_LENGTH];
-unsigned char shared_nonce[crypto_box_NONCEBYTES];
-unsigned char decrypted[MESSAGE_LENGTH];
+unsigned char server_nonce[crypto_box_NONCEBYTES];
+unsigned char serverDecrypted[MESSAGE_LENGTH];
 
-/* Returns a char* array containing nonce */
-char* serverGenerateNonce() {
+  /* Generate and display server nonce*/
+void serverGenerateNonce() {
 
+  /* randombytes(shared_nonce, crypto_box_NONCEBYTES); */
+  for (counter = 0; counter < crypto_box_NONCEBYTES; counter++)
+    server_nonce[counter] = 0;
+
+  display_bytes(server_nonce, crypto_box_NONCEBYTES);
 }
 
 /* Returns a struct containing key pair */
 void serverGenerateKeyPair() {
+
+  /* Construct keypairs for sender. */
+
+  result = crypto_box_keypair(receiver_pk, receiver_sk);
+  assert(result == 0);
+
+  (void) printf("Receiver Public Key:\n");
+  display_bytes(receiver_pk, crypto_box_PUBLICKEYBYTES);
+
+  (void) printf("Receiver Secret Key:\n");
+  display_bytes(receiver_sk, crypto_box_SECRETKEYBYTES);
+
+}
+
+void serverDecrypt() {
+
+  /* Decrypt the message at the receiving end.
+
+     crypto_box returns a value that begins with crypto_box_BOXZEROBYTES
+     zero bytes, and so satisfies the precondition for crypto_box_open.
+  */
+
+  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, server_nonce, sender_pk, receiver_sk);
+  assert(result == 0);
+
+  (void) printf("Decrypted Message:\n");
+  display_bytes(serverDecrypted, MESSAGE_LENGTH);
 
 }
