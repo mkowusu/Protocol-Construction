@@ -5,8 +5,9 @@
 unsigned char receiver_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char receiver_sk[crypto_box_SECRETKEYBYTES];
 unsigned char serverDecrypted[MESSAGE_LENGTH];
+unsigned char nonce_n0[crypto_box_NONCEBYTES];
 
 void serverGenerateKeyPair();
-void serverGenerateNonce();
+void serverGenerateNonce(char nonce[crypto_box_NONCEBYTES]);
 void serverDecrypt();
 

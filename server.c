@@ -14,17 +14,17 @@
 unsigned char receiver_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char receiver_sk[crypto_box_SECRETKEYBYTES];
 long long int counter;
-unsigned char server_nonce[crypto_box_NONCEBYTES];
+unsigned char nonce_n0[crypto_box_NONCEBYTES];
 unsigned char serverDecrypted[MESSAGE_LENGTH];
 
   /* Generate and display server nonce*/
-void serverGenerateNonce() {
+void serverGenerateNonce(unsigned char nonce[crypto_box_NONCEBYTES]) {
 
   /* randombytes(shared_nonce, crypto_box_NONCEBYTES); */
   for (counter = 0; counter < crypto_box_NONCEBYTES; counter++)
-    server_nonce[counter] = 0;
+    nonce[counter] = 0;
 
-  display_bytes(server_nonce, crypto_box_NONCEBYTES);
+  display_bytes(nonce, crypto_box_NONCEBYTES);
 }
 
 /* Returns a struct containing key pair */
@@ -43,7 +43,7 @@ void serverGenerateKeyPair() {
 
 }
 
-void serverDecrypt() {
+void serverDecrypt(char* nonce) {
 
   /* Decrypt the message at the receiving end.
 
@@ -51,7 +51,7 @@ void serverDecrypt() {
      zero bytes, and so satisfies the precondition for crypto_box_open.
   */
 
-  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, client_nonce, sender_pk, receiver_sk);
+  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, nonce, sender_pk, receiver_sk);
   assert(result == 0);
 
   (void) printf("Decrypted Message:\n");

@@ -53,24 +53,25 @@ int main(){
   for (counter = 0; counter < INTERNAL_MESSAGE_LENGTH; counter++)
     plaintext[crypto_box_ZEROBYTES + counter] = message[counter];
 
-  (void) printf("\nMessage in plaintext:\n");
-  display_bytes(plaintext, MESSAGE_LENGTH);
-  
-  /* Generate and display client nonce, N1 */  
-  printf("Client Nonce\n");
-  clientGenerateNonce();
+  /* Generate and display nonce, N0 */  
+  printf("\nServer Generated Nonce N0: \n");
+  serverGenerateNonce(nonce_n0);
 
+    /* Generate and display nonce, N1 */  
+  printf("Client Generated Nonce N1: \n");
+  clientGenerateNonce(nonce_n1);
+ 
   /* Generate and display key pair (Ec, Dc) */
-  clientGenerateKeyPair();
+   clientGenerateKeyPair();
 
   /* Generate and display key pair (Es, Ds) */
-  serverGenerateKeyPair();
+   serverGenerateKeyPair();
 
   /* Concatenate client nonce and public key Ec then encrypt */
-  clientEncrypt();
+   clientEncrypt(encrypted_nonce, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0);
 
   /* Server decrypts message from client */
-  serverDecrypt();
+  //  serverDecrypt();
 
  return NO_ERROR;
 

@@ -21,17 +21,19 @@ int result;
 long long int counter;
 unsigned char plaintext[MESSAGE_LENGTH];
 unsigned char clientCiphertext[MESSAGE_LENGTH];
-unsigned char client_nonce[crypto_box_NONCEBYTES];
+unsigned char nonce_n1[crypto_box_NONCEBYTES];
 unsigned char decrypted[MESSAGE_LENGTH];
+unsigned char encrypted_nonce[crypto_box_NONCEBYTES];
+unsigned char client_concat[crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
 
   /* Generate and display client nonce*/
-void clientGenerateNonce() {
+void clientGenerateNonce(unsigned char nonce[crypto_box_NONCEBYTES]) {
 
   /* randombytes(client_nonce, crypto_box_NONCEBYTES); */
   for (counter = 0; counter < crypto_box_NONCEBYTES; counter++)
-    client_nonce[counter] = 0;
+    nonce[counter] = 0;
 
-  display_bytes(client_nonce, crypto_box_NONCEBYTES);
+  display_bytes(nonce, crypto_box_NONCEBYTES);
 }
 
   /* Generate and display key pair (Ec, Dc) */
@@ -53,15 +55,15 @@ void clientGenerateKeyPair() {
 
   /* Concatenate client nonce and public key Ec then encrypt */
   /* Display ciphertext */
-void clientEncrypt(){
+void clientEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce){
 
   (void) printf("Plaintext as seen by client:\n");
   display_bytes(plaintext, MESSAGE_LENGTH);
 
-  result = crypto_box(clientCiphertext, plaintext, MESSAGE_LENGTH, client_nonce, receiver_pk, sender_sk);
+  result = crypto_box(encrypted, toEncrypt, length, nonce, receiver_pk, sender_sk);
   assert(result == 0);
 
-  (void) printf("Encrpyted Message:\n");
-  display_bytes(clientCiphertext, MESSAGE_LENGTH);
+  (void) printf("Encrpyted:\n");
+  display_bytes(encrypted, crypto_box_ZEROBYTES + 24);
 
 }
