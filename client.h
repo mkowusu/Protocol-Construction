@@ -4,13 +4,11 @@
 
 unsigned char clientCiphertext[MESSAGE_LENGTH];
 
-unsigned char nonce_n1[crypto_box_NONCEBYTES];
-
 unsigned char client_pk[crypto_box_PUBLICKEYBYTES];
 
-unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
+unsigned char encrypted_n1[crypto_box_NONCEBYTES];
 
-void clientGenerateNonce();
+void generateN1();
 
 void clientGenerateKeyPair();
 

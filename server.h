@@ -4,10 +4,12 @@
 
 unsigned char server_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char first_pk[crypto_box_PUBLICKEYBYTES];
+unsigned char first_sk[crypto_box_SECRETKEYBYTES];
 unsigned char serverDecrypted[MESSAGE_LENGTH];
 unsigned char nonce_n0[crypto_box_NONCEBYTES];
 
 void serverGenerateKeyPair();
-void serverGenerateNonce(char nonce[crypto_box_NONCEBYTES]);
+void generateN0();
+void generateN2();
 void serverDecrypt();
 

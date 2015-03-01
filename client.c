@@ -22,25 +22,40 @@ long long int counter;
 unsigned char plaintext[MESSAGE_LENGTH];
 unsigned char clientCiphertext[MESSAGE_LENGTH];
 unsigned char nonce_n1[crypto_box_NONCEBYTES];
+unsigned char nonce_n3[crypto_box_NONCEBYTES];
 unsigned char decrypted[MESSAGE_LENGTH];
 unsigned char encrypted_n1[crypto_box_NONCEBYTES];
 unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
 
-  /* Generate and display client nonce*/
-void clientGenerateNonce(unsigned char nonce[crypto_box_NONCEBYTES]) {
+  /* Generic function to generate client nonces */
+void clientGenerateNonce(unsigned char* nonce) {
 
-  /* randombytes(client_nonce, crypto_box_NONCEBYTES); */
   for (counter = 0; counter < crypto_box_NONCEBYTES; counter++)
     nonce[counter] = 0;
 
   display_bytes(nonce, crypto_box_NONCEBYTES);
 }
 
+/* Function to generate nonce n1 */
+void generateN1() {
+
+  (void) printf("Client generated nonce, N1:\n");
+  clientGenerateNonce(nonce_n1);
+
+}
+
+/* Function to generate nonce n3 */
+void generateN3() {
+
+  (void) printf("Client generated nonce, N3:\n");
+  clientGenerateNonce(nonce_n3);
+
+}
+
   /* Generate and display key pair (Ec, Dc) */
 void clientGenerateKeyPair() {
 
   /* Construct keypairs for sender. */
-
   result = crypto_box_keypair(client_pk, client_sk);
   assert(result == 0);
 
@@ -52,18 +67,24 @@ void clientGenerateKeyPair() {
 
 }
 
-  /* Concatenate client nonce and public key Ec then encrypt */
-  /* Display ciphertext */
-void clientEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce){
+  /* Client function for encryption */
+void clientEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, char* pk, char* sk){
 
-  result = crypto_box(encrypted, toEncrypt, length, nonce, server_pk, client_sk);
+  result = crypto_box(encrypted, toEncrypt, length, nonce, pk, sk);
   assert(result == 0);
-
-  (void) printf("Encrpyted item:\n");
-  display_bytes(encrypted, crypto_box_ZEROBYTES + 24);
 
 }
 
+/* Function to encrypt and display N1 */
+void clientEncryptN1() {
+
+clientEncrypt(encrypted_n1, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0, first_pk, first_sk);
+
+  (void) printf("Encrypted N1:\n");
+  display_bytes(encrypted_n1, crypto_box_ZEROBYTES + 24);
+}
+
+/* Client function to concatenate two strings together */
 void clientConcat(int lengthA, int lengthB, unsigned char* output, unsigned char* a, unsigned char* b){
 
     for (counter = 0; counter <= lengthA; counter++)

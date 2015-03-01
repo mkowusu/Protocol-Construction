@@ -55,16 +55,16 @@ int main(){
    clientGenerateKeyPair();
 
   /* Generate and display nonce, N0 */  
-  printf("Server Generated Nonce N0: \n");
-  serverGenerateNonce(nonce_n0);
+  generateN0();
 
     /* Generate and display nonce, N1 */  
-  printf("Client Generated Nonce N1: \n");
-  clientGenerateNonce(nonce_n1);
+  generateN1();
 
   /* Client encrypts n1 */
-   clientEncrypt(encrypted_n1, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0);
+  clientEncryptN1();
 
+  /* Client concatenates encrypted nonce to public key for server */
+    (void) printf("Concatenated encrypted nonce and client public key to send to server:\n");
    clientConcat(crypto_box_ZEROBYTES + 24, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
 
   /* Server decrypts message from client */

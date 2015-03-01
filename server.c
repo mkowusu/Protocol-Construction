@@ -17,16 +17,30 @@ unsigned char first_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char first_sk[crypto_box_SECRETKEYBYTES];
 long long int counter;
 unsigned char nonce_n0[crypto_box_NONCEBYTES];
+unsigned char nonce_n2[crypto_box_NONCEBYTES];
 unsigned char serverDecrypted[MESSAGE_LENGTH];
 
-  /* Generate and display server nonce*/
-void serverGenerateNonce(unsigned char nonce[crypto_box_NONCEBYTES]) {
+  /* Generic function to generate server nonces */
+void serverGenerateNonce(unsigned char* nonce) {
 
-  /* randombytes(shared_nonce, crypto_box_NONCEBYTES); */
   for (counter = 0; counter < crypto_box_NONCEBYTES; counter++)
     nonce[counter] = 0;
 
   display_bytes(nonce, crypto_box_NONCEBYTES);
+}
+
+void generateN0() {
+
+  (void) printf("Client generated nonce, N0:\n");
+  serverGenerateNonce(nonce_n0);
+
+}
+
+void generateN2() {
+
+  (void) printf("Client generated nonce, N2:\n");
+  serverGenerateNonce(nonce_n2);
+
 }
 
 /* Generates first-time use key pair */
@@ -60,7 +74,16 @@ void serverGenerateKeyPair() {
   display_bytes(first_sk, crypto_box_SECRETKEYBYTES);
 
 }
-void serverDecrypt(unsigned char* nonce) {
+
+  /* Server function for encryption */
+void serverEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, char* pk, char* sk){
+
+  result = crypto_box(encrypted, toEncrypt, length, nonce, pk, sk);
+  assert(result == 0);
+
+}
+
+void serverDecrypt(unsigned char* decrypted, unsigned char* nonce) {
 
   /* Decrypt the message at the receiving end.
 
@@ -68,7 +91,7 @@ void serverDecrypt(unsigned char* nonce) {
      zero bytes, and so satisfies the precondition for crypto_box_open.
   */
 
-  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, nonce, client_pk, server_sk);
+  result = crypto_box_open(decrypted, clientCiphertext, MESSAGE_LENGTH, nonce, client_pk, server_sk);
   assert(result == 0);
 
   (void) printf("Decrypted Message:\n");
