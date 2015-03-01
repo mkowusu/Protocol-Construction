@@ -64,11 +64,13 @@ int main(){
   clientEncryptN1();
 
   /* Client concatenates encrypted nonce to public key for server */
-    (void) printf("Concatenated encrypted nonce and client public key to send to server:\n");
-   clientConcat(crypto_box_ZEROBYTES + 24, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
+  client1stConcat();
 
-  /* Server decrypts message from client */
-  //  serverDecrypt();
+   /* Server splits encrypted nonce and attached public key */
+   serverSplit(client_concat1, encryptedN1_from_client, pk_from_client, crypto_box_ZEROBYTES + 24, crypto_box_ZEROBYTES + 24 + crypto_box_PUBLICKEYBYTES);
+
+  /* Server decrypts nonce sent from client */
+   serverDecryptN0();
 
  return NO_ERROR;
 

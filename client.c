@@ -78,7 +78,7 @@ void clientEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, ch
 /* Function to encrypt and display N1 */
 void clientEncryptN1() {
 
-clientEncrypt(encrypted_n1, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0, first_pk, first_sk);
+clientEncrypt(encrypted_n1, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0, server_pk, first_sk);
 
   (void) printf("Encrypted N1:\n");
   display_bytes(encrypted_n1, crypto_box_ZEROBYTES + 24);
@@ -87,17 +87,22 @@ clientEncrypt(encrypted_n1, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0, first
 /* Client function to concatenate two strings together */
 void clientConcat(int lengthA, int lengthB, unsigned char* output, unsigned char* a, unsigned char* b){
 
-    for (counter = 0; counter <= lengthA; counter++)
+    for (counter = 0; counter < lengthA; counter++)
     output[counter] = a[counter];
 
-    int hold = counter;
-    int b_place;
+    int b_place = 0;
 
-    for (counter = counter-1; counter <= lengthA + lengthB; counter++){
+    for (counter = counter; counter < lengthA + lengthB; counter++){
       output[counter] = b[b_place];
       b_place++;
     }
 
     (void) printf("Concatenated item:\n");
     display_bytes(output, lengthA + lengthB);
+}
+
+void client1stConcat() {
+
+   clientConcat(crypto_box_ZEROBYTES + 24, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
+
 }

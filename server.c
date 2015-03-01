@@ -17,8 +17,10 @@ unsigned char first_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char first_sk[crypto_box_SECRETKEYBYTES];
 long long int counter;
 unsigned char nonce_n0[crypto_box_NONCEBYTES];
+unsigned char encryptedN1_from_client[crypto_box_NONCEBYTES];
 unsigned char nonce_n2[crypto_box_NONCEBYTES];
-unsigned char serverDecrypted[MESSAGE_LENGTH];
+unsigned char pk_from_client[crypto_box_PUBLICKEYBYTES];
+unsigned char decrypted_n1[crypto_box_NONCEBYTES];
 
   /* Generic function to generate server nonces */
 void serverGenerateNonce(unsigned char* nonce) {
@@ -83,7 +85,28 @@ void serverEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, ch
 
 }
 
-void serverDecrypt(unsigned char* decrypted, unsigned char* nonce) {
+void serverSplit(unsigned char* input, unsigned char* a, unsigned char* b, int splitPoint, int length) {
+
+  for (counter = 0; counter < splitPoint; counter++)
+  a[counter] = input[counter];
+
+int b_place = 0;
+
+for (counter = counter; counter < length; counter++){
+  b[b_place] = input[counter];
+    b_place++;
+
+ }
+
+  (void) printf("String 1:\n");
+  display_bytes(a, crypto_box_ZEROBYTES + 24);
+
+  (void) printf("String 2:\n");
+  display_bytes(b, crypto_box_PUBLICKEYBYTES);
+
+}
+
+void serverDecrypt(unsigned char* decrypted, unsigned char * cipher_text, int length, unsigned char* nonce, unsigned char* pk, unsigned char* sk) {
 
   /* Decrypt the message at the receiving end.
 
@@ -91,10 +114,16 @@ void serverDecrypt(unsigned char* decrypted, unsigned char* nonce) {
      zero bytes, and so satisfies the precondition for crypto_box_open.
   */
 
-  result = crypto_box_open(decrypted, clientCiphertext, MESSAGE_LENGTH, nonce, client_pk, server_sk);
+  result = crypto_box_open(decrypted, cipher_text, length, nonce, pk, sk);
   assert(result == 0);
 
   (void) printf("Decrypted Message:\n");
-  display_bytes(serverDecrypted, MESSAGE_LENGTH);
+  display_bytes(decrypted, length);
 
 }
+
+void serverDecryptN0() {
+
+  serverDecrypt(decrypted_n1, encryptedN1_from_client, crypto_box_NONCEBYTES, nonce_n0, first_pk, server_sk);
+
+}  

@@ -6,13 +6,13 @@ unsigned char clientCiphertext[MESSAGE_LENGTH];
 
 unsigned char client_pk[crypto_box_PUBLICKEYBYTES];
 
-unsigned char encrypted_n1[crypto_box_NONCEBYTES];
-
 void generateN1();
 
 void clientGenerateKeyPair();
 
 void clientEncrypt();
+
+void client1stConcat();
 
 int result;
 
