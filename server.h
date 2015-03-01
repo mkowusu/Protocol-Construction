@@ -14,4 +14,4 @@ void serverSplit(unsigned char* input, unsigned char* a, unsigned char* b, int s
 void serverGenerateKeyPair();
 void generateN0();
 void generateN2();
-void serverDecryptN0();
+void serverDecryptN1();

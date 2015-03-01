@@ -57,6 +57,7 @@ int main(){
     /* Generate and display nonce, N1 */  
   generateN1();
 
+  /* concatenate zerobytes to nonce_n1 for encryption */
   zeroBytesN1();
 
   /* Client encrypts n1 */

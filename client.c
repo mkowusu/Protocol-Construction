@@ -24,14 +24,14 @@ unsigned char clientCiphertext[MESSAGE_LENGTH];
 unsigned char nonce_n1[crypto_box_NONCEBYTES];
 unsigned char nonce_n3[crypto_box_NONCEBYTES];
 unsigned char decrypted[MESSAGE_LENGTH];
-unsigned char encrypted_n1[crypto_box_NONCEBYTES];
+unsigned char encrypted_n1[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
 unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
+unsigned char nonceN1_with_zerobytes[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
 
   /* Generic function to generate client nonces */
 void clientGenerateNonce(unsigned char* nonce) {
 
-  for (counter = 0; counter < crypto_box_NONCEBYTES; counter++)
-    nonce[counter] = 0;
+randombytes(nonce, crypto_box_NONCEBYTES);
 
   display_bytes(nonce, crypto_box_NONCEBYTES);
 }
@@ -78,10 +78,10 @@ void clientEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, ch
 /* Function to encrypt and display N1 */
 void clientEncryptN1() {
 
-clientEncrypt(encrypted_n1, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0, server_pk, first_sk);
+clientEncrypt(encrypted_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, server_pk, client_sk);
 
   (void) printf("Encrypted N1:\n");
-  display_bytes(encrypted_n1, crypto_box_ZEROBYTES + 24);
+  display_bytes(encrypted_n1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 }
 
 /* Client function to concatenate two strings together */
@@ -101,8 +101,31 @@ void clientConcat(int lengthA, int lengthB, unsigned char* output, unsigned char
     display_bytes(output, lengthA + lengthB);
 }
 
-void client1stConcat() {
+void zeroBytesConcat(char* item, char* newItem, int length){
 
-   clientConcat(crypto_box_ZEROBYTES + 24, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
+    for (counter = 0; counter < crypto_box_ZEROBYTES; counter++)
+    newItem[counter] = 0;
+
+    int item_place = 0;
+
+    for (counter = counter; counter < length; counter++){
+      newItem[counter] = item[item_place];
+      item_place++;
+    }
+
+    (void) printf("Concatenated item:\n");
+    display_bytes(newItem, length);
+}
+
+/* function to add crypto_box_ZEROBYTES number of 0s to beginning on N1 */
+void zeroBytesN1(){
+
+  zeroBytesConcat(nonce_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
+
+}
+
+void clientN1Concat() {
+
+   clientConcat(crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
 
 }

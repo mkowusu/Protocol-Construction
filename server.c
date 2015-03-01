@@ -20,7 +20,7 @@ unsigned char nonce_n0[crypto_box_NONCEBYTES];
 unsigned char encryptedN1_from_client[crypto_box_NONCEBYTES];
 unsigned char nonce_n2[crypto_box_NONCEBYTES];
 unsigned char pk_from_client[crypto_box_PUBLICKEYBYTES];
-unsigned char decrypted_n1[crypto_box_NONCEBYTES];
+unsigned char decrypted_n1[crypto_box_NONCEBYTES + crypto_box_ZEROBYTES];
 
   /* Generic function to generate server nonces */
 void serverGenerateNonce(unsigned char* nonce) {
@@ -33,31 +33,15 @@ void serverGenerateNonce(unsigned char* nonce) {
 
 void generateN0() {
 
-  (void) printf("Client generated nonce, N0:\n");
+  (void) printf("Server generated nonce, N0:\n");
   serverGenerateNonce(nonce_n0);
 
 }
 
 void generateN2() {
 
-  (void) printf("Client generated nonce, N2:\n");
+  (void) printf("Server generated nonce, N2:\n");
   serverGenerateNonce(nonce_n2);
-
-}
-
-/* Generates first-time use key pair */
-void generateFirstKeyPair() {
-
-  /* Construct keypairs for sender. */
-
-  result = crypto_box_keypair(server_pk, server_sk);
-  assert(result == 0);
-
-  (void) printf("\nFirst Time Use Public Key:\n");
-  display_bytes(server_pk, crypto_box_PUBLICKEYBYTES);
-
-  (void) printf("First Time Use Secret Key:\n");
-  display_bytes(server_sk, crypto_box_SECRETKEYBYTES);
 
 }
 
@@ -99,7 +83,7 @@ for (counter = counter; counter < length; counter++){
  }
 
   (void) printf("String 1:\n");
-  display_bytes(a, crypto_box_ZEROBYTES + 24);
+  display_bytes(a, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 
   (void) printf("String 2:\n");
   display_bytes(b, crypto_box_PUBLICKEYBYTES);
@@ -122,8 +106,8 @@ void serverDecrypt(unsigned char* decrypted, unsigned char * cipher_text, int le
 
 }
 
-void serverDecryptN0() {
+void serverDecryptN1() {
 
-  serverDecrypt(decrypted_n1, encryptedN1_from_client, crypto_box_NONCEBYTES, nonce_n0, first_pk, server_sk);
+  serverDecrypt(decrypted_n1, encryptedN1_from_client, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, client_pk, server_sk);
 
 }  

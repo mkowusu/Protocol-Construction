@@ -12,8 +12,10 @@ void clientGenerateKeyPair();
 
 void clientEncrypt();
 
-void client1stConcat();
+void clientN1Concat();
 
 int result;
 
-unsigned char client_concat1[crypto_box_ZEROBYTES + 24 + crypto_box_PUBLICKEYBYTES];
+void zeroBytesN1();
+
+unsigned char client_concat1[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
