@@ -22,7 +22,7 @@ Zhi and Albert for help with creating makefile
 
 #include <stdio.h>
 #include <assert.h>
-#include "crypto_box.h"
+#include <crypto_box.h>
 #include "client.h"
 #include "server.h"
 

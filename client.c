@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include "crypto_box.h"
+#include <crypto_box.h>
 #include "server.h"
 
 #define INTERNAL_MESSAGE_LENGTH  45

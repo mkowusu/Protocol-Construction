@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include "crypto_box.h"
+#include <crypto_box.h>
 #include "client.h"  
 
 unsigned char server_pk[crypto_box_PUBLICKEYBYTES];
@@ -43,7 +43,7 @@ void serverGenerateKeyPair() {
 
 }
 
-void serverDecrypt(char* nonce) {
+void serverDecrypt(unsigned char* nonce) {
 
   /* Decrypt the message at the receiving end.
 
