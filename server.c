@@ -11,8 +11,8 @@
 #include "crypto_box.h"
 #include "client.h"  
 
-unsigned char receiver_pk[crypto_box_PUBLICKEYBYTES];
-unsigned char receiver_sk[crypto_box_SECRETKEYBYTES];
+unsigned char server_pk[crypto_box_PUBLICKEYBYTES];
+unsigned char server_sk[crypto_box_SECRETKEYBYTES];
 long long int counter;
 unsigned char nonce_n0[crypto_box_NONCEBYTES];
 unsigned char serverDecrypted[MESSAGE_LENGTH];
@@ -32,14 +32,14 @@ void serverGenerateKeyPair() {
 
   /* Construct keypairs for sender. */
 
-  result = crypto_box_keypair(receiver_pk, receiver_sk);
+  result = crypto_box_keypair(server_pk, server_sk);
   assert(result == 0);
 
-  (void) printf("Receiver Public Key:\n");
-  display_bytes(receiver_pk, crypto_box_PUBLICKEYBYTES);
+  (void) printf("Server Public Key:\n");
+  display_bytes(server_pk, crypto_box_PUBLICKEYBYTES);
 
-  (void) printf("Receiver Secret Key:\n");
-  display_bytes(receiver_sk, crypto_box_SECRETKEYBYTES);
+  (void) printf("Server Secret Key:\n");
+  display_bytes(server_sk, crypto_box_SECRETKEYBYTES);
 
 }
 
@@ -51,7 +51,7 @@ void serverDecrypt(char* nonce) {
      zero bytes, and so satisfies the precondition for crypto_box_open.
   */
 
-  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, nonce, sender_pk, receiver_sk);
+  result = crypto_box_open(serverDecrypted, clientCiphertext, MESSAGE_LENGTH, nonce, client_pk, server_sk);
   assert(result == 0);
 
   (void) printf("Decrypted Message:\n");

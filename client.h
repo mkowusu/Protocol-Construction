@@ -6,9 +6,9 @@ unsigned char clientCiphertext[MESSAGE_LENGTH];
 
 unsigned char nonce_n1[crypto_box_NONCEBYTES];
 
-unsigned char sender_pk[crypto_box_PUBLICKEYBYTES];
+unsigned char client_pk[crypto_box_PUBLICKEYBYTES];
 
-unsigned char sender_sk[crypto_box_SECRETKEYBYTES];
+unsigned char client_sk[crypto_box_SECRETKEYBYTES];
 
 unsigned char encrypted_nonce[crypto_box_NONCEBYTES];
 

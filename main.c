@@ -14,6 +14,10 @@
 
    http://cboard.cprogramming.com/c-programming/136163-help-array-def-different-file.html
    For help with using header files to share data
+
+Alex Mitchell for clarification of assignment
+
+Zhi and Albert for help with creating makefile
 */
 
 #include <stdio.h>
@@ -37,11 +41,6 @@ void display_bytes(const unsigned char *byte_vector, long long int length) {
 
 
 int main(){
-
-  unsigned char sender_pk[crypto_box_PUBLICKEYBYTES];
-  unsigned char sender_sk[crypto_box_SECRETKEYBYTES];
-  unsigned char receiver_pk[crypto_box_PUBLICKEYBYTES];
-  unsigned char receiver_sk[crypto_box_SECRETKEYBYTES];
   int result;
   long long int counter;
   char message[INTERNAL_MESSAGE_LENGTH] = "This is the forest primeval ...\n";
