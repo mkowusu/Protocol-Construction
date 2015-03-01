@@ -45,29 +45,27 @@ int main(){
   long long int counter;
   char message[INTERNAL_MESSAGE_LENGTH] = "This is the forest primeval ...\n";
 
-  /* Prepare and display a message for encryption. */
+  /* Generate and display first time use key pair (Ef, Df)*/
+  generateFirstKeyPair();
 
-  for (counter = 0; counter < crypto_box_ZEROBYTES; counter++)
-    plaintext[counter] = 0;
-  for (counter = 0; counter < INTERNAL_MESSAGE_LENGTH; counter++)
-    plaintext[crypto_box_ZEROBYTES + counter] = message[counter];
+   /* Generate and display key pair (Es, Ds) */
+  serverGenerateKeyPair();
+
+ /* Generate and display key pair (Ec, Dc) */
+   clientGenerateKeyPair();
 
   /* Generate and display nonce, N0 */  
-  printf("\nServer Generated Nonce N0: \n");
+  printf("Server Generated Nonce N0: \n");
   serverGenerateNonce(nonce_n0);
 
     /* Generate and display nonce, N1 */  
   printf("Client Generated Nonce N1: \n");
   clientGenerateNonce(nonce_n1);
- 
-  /* Generate and display key pair (Ec, Dc) */
-   clientGenerateKeyPair();
 
-  /* Generate and display key pair (Es, Ds) */
-   serverGenerateKeyPair();
+  /* Client encrypts n1 */
+   clientEncrypt(encrypted_n1, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0);
 
-  /* Concatenate client nonce and public key Ec then encrypt */
-   clientEncrypt(encrypted_nonce, nonce_n1, crypto_box_ZEROBYTES + 24, nonce_n0);
+   clientConcat(crypto_box_ZEROBYTES + 24, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
 
   /* Server decrypts message from client */
   //  serverDecrypt();

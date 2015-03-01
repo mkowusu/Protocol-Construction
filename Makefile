@@ -3,7 +3,7 @@
 
 CC = cc
 
-CFLAGS = -g
+CFLAGS =  -g
 
 all: main
 

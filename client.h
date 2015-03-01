@@ -8,11 +8,7 @@ unsigned char nonce_n1[crypto_box_NONCEBYTES];
 
 unsigned char client_pk[crypto_box_PUBLICKEYBYTES];
 
-unsigned char client_sk[crypto_box_SECRETKEYBYTES];
-
-unsigned char encrypted_nonce[crypto_box_NONCEBYTES];
-
-unsigned char plaintext[MESSAGE_LENGTH];
+unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
 
 void clientGenerateNonce();
 
@@ -22,4 +18,4 @@ void clientEncrypt();
 
 int result;
 
-unsigned char client_concatenation[crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
+unsigned char client_concat1[crypto_box_ZEROBYTES + 24 + crypto_box_PUBLICKEYBYTES];

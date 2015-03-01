@@ -13,6 +13,8 @@
 
 unsigned char server_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char server_sk[crypto_box_SECRETKEYBYTES];
+unsigned char first_pk[crypto_box_PUBLICKEYBYTES];
+unsigned char first_sk[crypto_box_SECRETKEYBYTES];
 long long int counter;
 unsigned char nonce_n0[crypto_box_NONCEBYTES];
 unsigned char serverDecrypted[MESSAGE_LENGTH];
@@ -27,22 +29,37 @@ void serverGenerateNonce(unsigned char nonce[crypto_box_NONCEBYTES]) {
   display_bytes(nonce, crypto_box_NONCEBYTES);
 }
 
-/* Returns a struct containing key pair */
-void serverGenerateKeyPair() {
+/* Generates first-time use key pair */
+void generateFirstKeyPair() {
 
   /* Construct keypairs for sender. */
 
   result = crypto_box_keypair(server_pk, server_sk);
   assert(result == 0);
 
-  (void) printf("Server Public Key:\n");
+  (void) printf("\nFirst Time Use Public Key:\n");
   display_bytes(server_pk, crypto_box_PUBLICKEYBYTES);
 
-  (void) printf("Server Secret Key:\n");
+  (void) printf("First Time Use Secret Key:\n");
   display_bytes(server_sk, crypto_box_SECRETKEYBYTES);
 
 }
 
+/* Generates server's key pair */
+void serverGenerateKeyPair() {
+
+  /* Construct keypairs for sender. */
+
+  result = crypto_box_keypair(first_pk, first_sk);
+  assert(result == 0);
+
+  (void) printf("Server Public Key:\n");
+  display_bytes(first_pk, crypto_box_PUBLICKEYBYTES);
+
+  (void) printf("Server Secret Key:\n");
+  display_bytes(first_sk, crypto_box_SECRETKEYBYTES);
+
+}
 void serverDecrypt(unsigned char* nonce) {
 
   /* Decrypt the message at the receiving end.
