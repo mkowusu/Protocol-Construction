@@ -4,8 +4,6 @@
 
 unsigned char clientCiphertext[MESSAGE_LENGTH];
 
-unsigned char client_pk[crypto_box_PUBLICKEYBYTES];
-
 void generateN1();
 
 void clientGenerateKeyPair();

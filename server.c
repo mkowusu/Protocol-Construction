@@ -53,7 +53,7 @@ void serverGenerateKeyPair() {
   result = crypto_box_keypair(first_pk, first_sk);
   assert(result == 0);
 
-  (void) printf("Server Public Key:\n");
+  (void) printf("\nServer Public Key:\n");
   display_bytes(first_pk, crypto_box_PUBLICKEYBYTES);
 
   (void) printf("Server Secret Key:\n");
@@ -90,6 +90,7 @@ for (counter = counter; counter < length; counter++){
 
 }
 
+/* Generic server function for decryption */
 void serverDecrypt(unsigned char* decrypted, unsigned char * cipher_text, int length, unsigned char* nonce, unsigned char* pk, unsigned char* sk) {
 
   /* Decrypt the message at the receiving end.
@@ -98,16 +99,17 @@ void serverDecrypt(unsigned char* decrypted, unsigned char * cipher_text, int le
      zero bytes, and so satisfies the precondition for crypto_box_open.
   */
 
-  result = crypto_box_open(decrypted, cipher_text, length, nonce, pk, sk);
+  result = crypto_box_open(decrypted, cipher_text, length, nonce, sk, pk);
   assert(result == 0);
-
-  (void) printf("Decrypted Message:\n");
-  display_bytes(decrypted, length);
 
 }
 
+/* Function to decrypt nonce n1 using public key recieved from client */
 void serverDecryptN1() {
 
-  serverDecrypt(decrypted_n1, encryptedN1_from_client, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, client_pk, server_sk);
+  serverDecrypt(decrypted_n1, encryptedN1_from_client, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, pk_from_client, server_sk);
+
+  (void) printf("Server decrypted nonce, N1, recieved from client including ZEROBYTES 0s:\n");
+  display_bytes(decrypted_n1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 
 }  

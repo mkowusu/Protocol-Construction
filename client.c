@@ -25,7 +25,7 @@ unsigned char nonce_n1[crypto_box_NONCEBYTES];
 unsigned char nonce_n3[crypto_box_NONCEBYTES];
 unsigned char decrypted[MESSAGE_LENGTH];
 unsigned char encrypted_n1[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
-unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES];
+unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_ZEROBYTES + crypto_box_PUBLICKEYBYTES];
 unsigned char nonceN1_with_zerobytes[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
 
   /* Generic function to generate client nonces */
@@ -80,7 +80,7 @@ void clientEncryptN1() {
 
 clientEncrypt(encrypted_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, server_pk, client_sk);
 
-  (void) printf("Encrypted N1:\n");
+  (void) printf("Encrypted N1 with ZEROBYTES 0s:\n");
   display_bytes(encrypted_n1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 }
 
@@ -96,9 +96,6 @@ void clientConcat(int lengthA, int lengthB, unsigned char* output, unsigned char
       output[counter] = b[b_place];
       b_place++;
     }
-
-    (void) printf("Concatenated item:\n");
-    display_bytes(output, lengthA + lengthB);
 }
 
 void zeroBytesConcat(char* item, char* newItem, int length){
@@ -113,8 +110,6 @@ void zeroBytesConcat(char* item, char* newItem, int length){
       item_place++;
     }
 
-    (void) printf("Concatenated item:\n");
-    display_bytes(newItem, length);
 }
 
 /* function to add crypto_box_ZEROBYTES number of 0s to beginning on N1 */
@@ -122,10 +117,15 @@ void zeroBytesN1(){
 
   zeroBytesConcat(nonce_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 
+    (void) printf("N1 with ZEROBYTES number of 0s:\n");
+    display_bytes(nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 }
 
 void clientN1Concat() {
 
    clientConcat(crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
+
+    (void) printf("Encrypted nonce, N1, and client public key concatenated to send to server:\n");
+    display_bytes(client_concat1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 
 }

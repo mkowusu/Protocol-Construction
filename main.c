@@ -57,6 +57,7 @@ int main(){
     /* Generate and display nonce, N1 */  
   generateN1();
 
+  /* concatenate zerobytes to nonce_n1 for encryption */
   zeroBytesN1();
 
   /* Client encrypts n1 */
@@ -66,6 +67,7 @@ int main(){
   clientN1Concat();
 
    /* Server splits encrypted nonce and attached public key */
+  (void) printf("Server splits message recieved from client into encrypted nonce and public key:\n");
    serverSplit(client_concat1, encryptedN1_from_client, pk_from_client, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES);
 
   /* Server decrypts nonce sent from client */
