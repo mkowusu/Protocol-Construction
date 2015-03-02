@@ -12,12 +12,14 @@
 #define INTERNAL_MESSAGE_LENGTH  45
 #define MESSAGE_LENGTH           (crypto_box_ZEROBYTES + INTERNAL_MESSAGE_LENGTH)
 #define NO_ERROR                 0
+#define SIZE_OF_TIME_T           10
 
 unsigned char server_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char nonce_n0[crypto_box_NONCEBYTES];
 unsigned char encryptedN1_from_client[crypto_box_NONCEBYTES];
 unsigned char decryptedN1_from_client[crypto_box_NONCEBYTES];
 unsigned char pk_from_client[crypto_box_PUBLICKEYBYTES];
+unsigned char encrypted_server_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
 
 void serverSplit(unsigned char* input, unsigned char* a, unsigned char* b, int splitPoint, int length);
 void serverGenerateKeyPair();
@@ -28,3 +30,4 @@ void serverExtractN1();
 void serverTimeStamp();
 void verifyTime();
 void serverResponse1();
+void serverEncryptMessage1();

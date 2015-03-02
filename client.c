@@ -27,6 +27,8 @@ unsigned char decrypted[MESSAGE_LENGTH];
 unsigned char encrypted_n1[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
 unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_ZEROBYTES + crypto_box_PUBLICKEYBYTES];
 unsigned char nonceN1_with_zerobytes[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
+unsigned char encrypted_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
+unsigned char decrypted_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
 
 /* Generic function to generate client nonces */
 void clientGenerateNonce(unsigned char* nonce) {
@@ -129,3 +131,27 @@ void clientN1Concat() {
   display_bytes(client_concat1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES);
 
 }
+
+/* Generic client function for decryption */
+void clientDecrypt(unsigned char* decrypted, unsigned char * cipher_text, int length, unsigned char* nonce, unsigned char* pk, unsigned char* sk) {
+
+  /* Decrypt the message at the receiving end.
+
+     crypto_box returns a value that begins with crypto_box_BOXZEROBYTES
+     zero bytes, and so satisfies the precondition for crypto_box_open.
+  */
+
+  result = crypto_box_open(decrypted, cipher_text, length, nonce, pk, sk);
+  assert(result == 0);
+
+}
+
+/* Function to decrypt nonce n1 using public key recieved from client */
+void clientDecryptMessage1() {
+
+  clientDecrypt(decrypted_message_1, encrypted_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T, nonce_n1, server_pk, client_sk);
+
+  (void) printf("Server decrypted message:\n");
+  display_bytes(decrypted_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T);
+
+} 

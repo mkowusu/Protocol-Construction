@@ -83,6 +83,10 @@ int main(){
 
   serverResponse1();
 
+  serverEncryptMessage1();
+
+  clientDecryptMessage1();
+
   return NO_ERROR;
 
 }

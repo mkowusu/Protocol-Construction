@@ -12,7 +12,7 @@
 #include <time.h>
 #include "client.h"  
 
-#define SIZE_OF_TIME_T           10
+
 
 unsigned char server_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char server_sk[crypto_box_SECRETKEYBYTES];
@@ -26,6 +26,7 @@ unsigned char decrypted_n1[crypto_box_NONCEBYTES];
 time_t server_time;
 unsigned char time_string[SIZE_OF_TIME_T];
 unsigned char server_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
+unsigned char encrypted_server_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
 
 /* Generate N0 0 nonce for initial communication */
 void generateN0() {
@@ -56,14 +57,6 @@ void serverGenerateKeyPair() {
 
   (void) printf("Server Secret Key:\n");
   display_bytes(server_sk, crypto_box_SECRETKEYBYTES);
-
-}
-
-/* Server function for encryption */
-void serverEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, char* pk, char* sk){
-
-  result = crypto_box(encrypted, toEncrypt, length, nonce, sk, pk);
-  assert(result == 0);
 
 }
 
@@ -140,6 +133,7 @@ void serverTimeStamp() {
   server_time = time(NULL);
   sprintf(time_string, "%ld", server_time);
   printf("%s\n\n", time_string);
+
 }
 
 void verifyTime() {
@@ -171,4 +165,21 @@ void serverResponse1(){
 
     (void) printf("Message to be sent to client in plaintext:\n");
  display_bytes(server_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T );
+}
+
+/* Server function for encryption */
+void serverEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, char* pk, char* sk){
+
+  result = crypto_box(encrypted, toEncrypt, length, nonce, sk, pk);
+  assert(result == 0);
+
+}
+
+/* Encrypt first response from server to client */
+void serverEncryptMessage1(){ 
+
+  serverEncrypt(encrypted_server_message_1, server_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T, decrypted_n1, pk_from_client, server_sk);
+
+  (void) printf("Encrypted Message to send to client:\n");
+ display_bytes(encrypted_server_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T );
 }
