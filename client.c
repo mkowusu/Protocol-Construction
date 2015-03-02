@@ -28,10 +28,10 @@ unsigned char encrypted_n1[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
 unsigned char client_concat1[crypto_box_NONCEBYTES + crypto_box_ZEROBYTES + crypto_box_PUBLICKEYBYTES];
 unsigned char nonceN1_with_zerobytes[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES];
 
-  /* Generic function to generate client nonces */
+/* Generic function to generate client nonces */
 void clientGenerateNonce(unsigned char* nonce) {
 
-randombytes(nonce, crypto_box_NONCEBYTES);
+  randombytes(nonce, crypto_box_NONCEBYTES);
 
   display_bytes(nonce, crypto_box_NONCEBYTES);
 }
@@ -52,7 +52,7 @@ void generateN3() {
 
 }
 
-  /* Generate and display key pair (Ec, Dc) */
+/* Generate and display key pair (Ec, Dc) */
 void clientGenerateKeyPair() {
 
   /* Construct keypairs for sender. */
@@ -67,7 +67,7 @@ void clientGenerateKeyPair() {
 
 }
 
-  /* Client function for encryption */
+/* Client function for encryption */
 void clientEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, char* pk, char* sk){
 
   result = crypto_box(encrypted, toEncrypt, length, nonce, pk, sk);
@@ -78,7 +78,7 @@ void clientEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, ch
 /* Function to encrypt and display N1 */
 void clientEncryptN1() {
 
-clientEncrypt(encrypted_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, server_pk, client_sk);
+  clientEncrypt(encrypted_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, server_pk, client_sk);
 
   (void) printf("Encrypted N1 with ZEROBYTES 0s:\n");
   display_bytes(encrypted_n1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
@@ -87,28 +87,28 @@ clientEncrypt(encrypted_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypt
 /* Client function to concatenate two strings together */
 void clientConcat(int lengthA, int lengthB, unsigned char* output, unsigned char* a, unsigned char* b){
 
-    for (counter = 0; counter < lengthA; counter++)
+  for (counter = 0; counter < lengthA; counter++)
     output[counter] = a[counter];
 
-    int b_place = 0;
+  int b_place = 0;
 
-    for (counter = counter; counter < lengthA + lengthB; counter++){
-      output[counter] = b[b_place];
-      b_place++;
-    }
+  for (counter = counter; counter < lengthA + lengthB; counter++){
+    output[counter] = b[b_place];
+    b_place++;
+  }
 }
 
 void zeroBytesConcat(char* item, char* newItem, int length){
 
-    for (counter = 0; counter < crypto_box_ZEROBYTES; counter++)
+  for (counter = 0; counter < crypto_box_ZEROBYTES; counter++)
     newItem[counter] = 0;
 
-    int item_place = 0;
+  int item_place = 0;
 
-    for (counter = counter; counter < length; counter++){
-      newItem[counter] = item[item_place];
-      item_place++;
-    }
+  for (counter = counter; counter < length; counter++){
+    newItem[counter] = item[item_place];
+    item_place++;
+  }
 
 }
 
@@ -117,15 +117,15 @@ void zeroBytesN1(){
 
   zeroBytesConcat(nonce_n1, nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 
-    (void) printf("N1 with ZEROBYTES number of 0s:\n");
-    display_bytes(nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
+  (void) printf("N1 with ZEROBYTES number of 0s:\n");
+  display_bytes(nonceN1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 }
 
 void clientN1Concat() {
 
-   clientConcat(crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
+  clientConcat(crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, crypto_box_PUBLICKEYBYTES, client_concat1, encrypted_n1, client_pk);
 
-    (void) printf("Encrypted nonce, N1, and client public key concatenated to send to server:\n");
-    display_bytes(client_concat1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
+  (void) printf("Encrypted nonce, N1, and client public key concatenated to send to server:\n");
+  display_bytes(client_concat1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES);
 
 }
