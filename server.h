@@ -7,12 +7,12 @@
 */
 
 
-/* Information in this header file contain data that the server effectively sends to the system for interacting with the client */
+/* Information in this header file contain data that the server effectively sends to the system  and client for interacting with the client. No data is revealed through header file that would compromise security of communication. */
 
 #define INTERNAL_MESSAGE_LENGTH  45
 #define MESSAGE_LENGTH           (crypto_box_ZEROBYTES + INTERNAL_MESSAGE_LENGTH)
 #define NO_ERROR                 0
-#define SIZE_OF_TIME_T           10
+#define SIZE_OF_TIME_T           8
 
 unsigned char server_pk[crypto_box_PUBLICKEYBYTES];
 unsigned char nonce_n0[crypto_box_NONCEBYTES];

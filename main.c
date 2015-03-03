@@ -11,11 +11,14 @@
 
    Mr. Stone for help with compiling programs to include devurandom.c functions
    And debugging header files
+Debuggging client decrypt function
 
    http://cboard.cprogramming.com/c-programming/136163-help-array-def-different-file.html
    For help with using header files to share data
 
    Alex Mitchell for clarification of assignment
+
+Ethan R
 
    Zhi and Albert for help with creating makefile
 */
@@ -79,6 +82,7 @@ int main(){
   /* Server generates nonce n2 */
   generateN2();
 
+  /* Server generates a time stamp */
   serverTimeStamp();
 
   serverResponse1();

@@ -23,10 +23,16 @@ unsigned char nonce_n2[crypto_box_NONCEBYTES];
 unsigned char pk_from_client[crypto_box_PUBLICKEYBYTES];
 unsigned char decrypted_n1_ZEROBYTES[crypto_box_NONCEBYTES + crypto_box_ZEROBYTES];
 unsigned char decrypted_n1[crypto_box_NONCEBYTES];
-time_t server_time;
 unsigned char time_string[SIZE_OF_TIME_T];
 unsigned char server_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
 unsigned char encrypted_server_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
+
+/* Union to store time value as time_t and an unsigned char of bytes */
+union timestamp {
+  time_t native; 
+  unsigned char bytes[sizeof(time_t)];
+};
+  union timestamp server_time;
 
 /* Generate N0 0 nonce for initial communication */
 void generateN0() {
@@ -130,9 +136,10 @@ void serverDecryptN1() {
 void serverTimeStamp() {
 
   (void) printf("Server time in seconds:\n");
-  server_time = time(NULL);
-  sprintf(time_string, "%ld", server_time);
-  printf("%s\n\n", time_string);
+
+  server_time.native = time(NULL);
+
+  display_bytes(server_time.bytes, sizeof(time_t));
 
 }
 
@@ -148,7 +155,7 @@ void serverResponse1(){
   for (counter = 0; counter < crypto_box_ZEROBYTES; counter++)
     server_message_1[counter] = 0;
 
-  int place; /* Place holder */
+  int place; /* placeholder */
 
   for (counter = counter; counter < crypto_box_ZEROBYTES + crypto_box_NONCEBYTES; counter++)
     server_message_1[counter] = decrypted_n1[place++];
@@ -161,7 +168,7 @@ void serverResponse1(){
   place = 0; /* reset placeholder */
 
   for (counter = counter; counter < crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T; counter++)
-    server_message_1[counter] = time_string[place++];
+    server_message_1[counter] = server_time.bytes[place++];
 
     (void) printf("Message to be sent to client in plaintext:\n");
  display_bytes(server_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T );
@@ -170,7 +177,7 @@ void serverResponse1(){
 /* Server function for encryption */
 void serverEncrypt(char* encrypted, char* toEncrypt, int length, char* nonce, char* pk, char* sk){
 
-  result = crypto_box(encrypted, toEncrypt, length, nonce, sk, pk);
+  result = crypto_box(encrypted, toEncrypt, length, nonce, pk, sk);
   assert(result == 0);
 
 }
