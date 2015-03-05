@@ -31,3 +31,4 @@ void serverTimeStamp();
 void verifyTime();
 void serverResponse1();
 void serverEncryptMessage1();
+void serverRespond();

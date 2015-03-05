@@ -26,13 +26,22 @@ unsigned char decrypted_n1[crypto_box_NONCEBYTES];
 unsigned char time_string[SIZE_OF_TIME_T];
 unsigned char server_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
 unsigned char encrypted_server_message_1[SIZE_OF_TIME_T + (crypto_box_NONCEBYTES * 2) + crypto_box_ZEROBYTES];
+unsigned char client_question_decrypted[crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + INTERNAL_MESSAGE_LENGTH];
+unsigned char nonce_n3[crypto_box_NONCEBYTES];
 
 /* Union to store time value as time_t and an unsigned char of bytes */
 union timestamp {
   time_t native; 
   unsigned char bytes[sizeof(time_t)];
 };
-  union timestamp server_time;
+
+union message {
+  char* native;//[INTERNAL_MESSAGE_LENGTH]; 
+  unsigned char bytes[INTERNAL_MESSAGE_LENGTH];
+};
+
+union timestamp server_time;
+union timestamp client_time;
 
 /* Generate N0 0 nonce for initial communication */
 void generateN0() {
@@ -135,10 +144,12 @@ void serverDecryptN1() {
 /* Server function to generate time stamp */
 void serverTimeStamp() {
 
-  (void) printf("Server time in seconds:\n");
-
   server_time.native = time(NULL);
 
+  (void) printf("Server time in seconds:\n");
+  (void) printf("%ld\n", server_time.native);
+
+  (void) printf("Server time in bytes:\n");
   display_bytes(server_time.bytes, sizeof(time_t));
 
 }
@@ -188,5 +199,35 @@ void serverEncryptMessage1(){
   serverEncrypt(encrypted_server_message_1, server_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T, decrypted_n1, pk_from_client, server_sk);
 
   (void) printf("Encrypted Message to send to client:\n");
- display_bytes(encrypted_server_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T );
+  display_bytes(encrypted_server_message_1, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + SIZE_OF_TIME_T );
+}
+
+void serverRespond() {
+
+  serverDecrypt(client_question_decrypted, client_response_encrypted, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + INTERNAL_MESSAGE_LENGTH, nonce_n2, pk_from_client, server_sk);
+
+  (void) printf("Server decrypted nonce 2, nonce 3, and question received by Client:\n");
+  display_bytes(client_question_decrypted, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + INTERNAL_MESSAGE_LENGTH);
+
+  union message question;
+
+  int place = 0;
+
+  for (counter = crypto_box_ZEROBYTES + crypto_box_NONCEBYTES; counter < crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES *2); counter++)
+    nonce_n3[place++] = client_question_decrypted[counter];
+
+  (void) printf("Nonce 3 sent by Client and received by Server:\n");
+  display_bytes(nonce_n3, crypto_box_NONCEBYTES);
+
+  place = 0;
+
+  for (counter = counter; counter < crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES *2) + INTERNAL_MESSAGE_LENGTH; counter++)
+    question.bytes[place++] = client_question_decrypted[counter];
+
+  (void) printf("Question sent by Client and received by Server in bytes:\n");
+  display_bytes(question.bytes, INTERNAL_MESSAGE_LENGTH);
+
+  (void) printf("Question received in plaintext: \n");
+  (void) printf("%s\n\n", question.native);
+  
 }

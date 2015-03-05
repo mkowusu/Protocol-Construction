@@ -18,9 +18,14 @@ Debuggging client decrypt function
 
    Alex Mitchell for clarification of assignment
 
-Ethan R
+Ethan Ratcliff for help with using timestamp as a union
 
    Zhi and Albert for help with creating makefile
+
+To do:
+Parse server timestamp on client end. Create a union to save the bytes into and then access it as a time_t value, and print to make sure that the correct time is used. Maybe even print the time in both bytes and regular time before sending. Then figure out how to compare times to be within 90 seconds.
+
+Organize everything. Consolidate methods. Document.
 */
 
 #include <stdio.h>
@@ -90,6 +95,16 @@ int main(){
   serverEncryptMessage1();
 
   clientDecryptMessage1();
+
+  extractN2Time();
+
+  compareTimeStamps();
+
+  generateN3();
+
+  clientResponse();
+
+  serverRespond();
 
   return NO_ERROR;
 
