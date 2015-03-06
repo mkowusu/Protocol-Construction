@@ -32,7 +32,6 @@ unsigned char encrypted_server_message_1[crypto_box_ZEROBYTES + (crypto_box_NONC
 /* encrypted message from server containing answer and nonce N3 */
 unsigned char encrypted_server_answer[crypto_box_ZEROBYTES + crypto_box_NONCEBYTES + INTERNAL_MESSAGE_LENGTH];
 
-void generateN0();
-void serverGenerateKeyPair();
+void initialCommunicationRequirements();
 void serverInitialResponse();
 void serverAnswerQuestion();

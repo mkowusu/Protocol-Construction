@@ -85,10 +85,12 @@ union message answer;
 
 
 
-/* Begin client functions for interacting with system and server */
+/* begin client functions for interacting with system and server */
 
 
-/* Function to establish communication with server by sending over nonce N1 and identifying client public key to the server */
+/* Function to establish communication with server by sending over nonce 
+   N1 and identifying client public key to the server
+ */
 void clientInitialCommunication () {
 
   /* construct keypairs for sender */
@@ -106,7 +108,7 @@ void clientInitialCommunication () {
   randombytes(nonce_n1, crypto_box_NONCEBYTES);
 
   /* print nonce N1 */
-  (void) printf("Client generated nonce 1:\n");
+  (void) printf("Client generated nonce, N1:\n");
   display_bytes(nonce_n1, crypto_box_NONCEBYTES);
 
   /* create initial communication request by added crypto_box_ZEROBYTES number of 0s to beginning of message */
@@ -117,16 +119,12 @@ void clientInitialCommunication () {
   for (counter = counter; counter < crypto_box_ZEROBYTES + crypto_box_NONCEBYTES; counter++)
     n1_with_zerobytes[counter] = nonce_n1[place++];
 
-  /* print nonce N1 with concatenated zeroes */
-  (void) printf("Nonce 1 with ZEROBYTES number of 0s for encryption:\n");
-  display_bytes(n1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
-
   /* Encrypt nonce N1 */
   result = crypto_box(encrypted_n1, n1_with_zerobytes, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES, nonce_n0, server_pk, client_sk);
   assert(result == 0);
 
   /* print encrypted nonce N1 */
-  (void) printf("Encrypted nonce N1 with ZEROBYTES 0s:\n");
+  (void) printf("Encrypted nonce N1:\n");
   display_bytes(encrypted_n1, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES);
 
   /* concatenate encrypted nonce 1 and the client public key to send to server */
@@ -139,7 +137,7 @@ void clientInitialCommunication () {
     initial_message[counter] = client_pk[place++];
 
   /* print final initial communication request to be sent to server */
-  (void) printf("Encrypted nonce, N1, and client public key concatenated to send to server:\n");
+  (void) printf("Encrypted nonce N1, and client public key concatenated to send to server:\n");
   display_bytes(initial_message, crypto_box_ZEROBYTES + crypto_box_NONCEBYTES + crypto_box_PUBLICKEYBYTES);
 
 }
@@ -170,7 +168,7 @@ void clientAskQuestion () {
     nonce_n2[place++] = decrypted_message_1[counter];
 
   /* Display nonce N2 extracted from server message */
-  (void) printf("Nonce N2 extracted from server response 1:\n");
+  (void) printf("Nonce N2 extracted from server initial response:\n");
   display_bytes(nonce_n2, crypto_box_NONCEBYTES);
 
   place = 0; /* reset placeholder */
@@ -202,7 +200,7 @@ void clientAskQuestion () {
   randombytes(nonce_n3, crypto_box_NONCEBYTES);
 
   /* print nonce 3 */
-  (void) printf("Client generated nonce 3:\n");
+  (void) printf("Client generated nonce N3:\n");
   display_bytes(nonce_n3, crypto_box_NONCEBYTES);
 
   /* initialize question for server */
@@ -236,7 +234,7 @@ void clientAskQuestion () {
   assert(result == 0);
 
   /* print encrypted message to be sent to server */
-  (void) printf("Encrypted question to send to Server: \n");
+  (void) printf("Encrypted question to send to server: \n");
   display_bytes(client_question_encrypted, crypto_box_ZEROBYTES + (crypto_box_NONCEBYTES * 2) + INTERNAL_MESSAGE_LENGTH);
 }
 
@@ -272,7 +270,7 @@ void clientReadAnswer() {
     for (counter = counter; counter < crypto_box_ZEROBYTES + crypto_box_NONCEBYTES + SIZE_OF_TIME_T; counter++)
       answer.bytes[place++] = decrypted_server_answer[counter];
 
-    (void) printf("Answer sent by Server and received by Client in bytes:\n");
+    (void) printf("Answer sent by server and received by client in bytes:\n");
     display_bytes(answer.bytes, INTERNAL_MESSAGE_LENGTH);
  
     (void) printf("Answer received in plaintext: \n");
